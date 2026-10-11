@@ -21,7 +21,7 @@ ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
-YOUR_NAME = "Chaitanya"
+YOUR_NAME = "CurioByte Studio"
 
 # Google's TTS endpoint throttles bursts from shared CI IPs. When it does, it answers
 # 200 OK with no audio stream, which gTTS surfaces as "Probable cause: Unknown".
@@ -132,7 +132,7 @@ def generate_curriculum(previous_titles=None):
             history = f"The following lessons have already been created:\n{formatted}\n\nPlease continue from where this series left off.\n"
 
         prompt = f"""
-        You are an expert AI educator. Generate a curriculum for a YouTube series called 'AI for Developers by {YOUR_NAME}'.
+        You are an expert AI educator. Generate a curriculum for a beginner-friendly AI education series called 'Practical AI Explained' on the {YOUR_NAME} channel.
         {history}
         The style must be: 'Assume the viewer is a beginner or non-technical person starting their journey into AI as a developer.
         Use simple real-world analogies, relatable examples, and then connect to technical concepts.'
@@ -159,7 +159,7 @@ def generate_lesson_content(lesson_title):
     try:
         client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
         prompt = f"""
-        You are creating a lesson for the 'AI for Developers by {YOUR_NAME}' series. The topic is '{lesson_title}'.
+        You are creating a lesson for the 'Practical AI Explained' series on the {YOUR_NAME} channel. The topic is '{lesson_title}'.
         The style is: Assume the viewer is a beginner developer or non-tech person who wants to learn AI from scratch.
         Use analogies and clear, simple language. Each concept must be explained from a developer's perspective, assuming no prior AI or ML knowledge.
 
@@ -249,7 +249,7 @@ def generate_lesson_content(lesson_title):
 
 #         footer_height = int(height * 0.06)
 #         draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
-#         draw.text((40, height - footer_height + 12), f"AI for Developers by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
+#         draw.text((40, height - footer_height + 12), YOUR_NAME, font=footer_font, fill=(180, 180, 180))
 #         if total_slides > 0:
 #             slide_num_text = f"Slide {slide_number} of {total_slides}"
 #             slide_num_bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
@@ -355,7 +355,7 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
         # Footer
         footer_height = int(height * 0.06)
         draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
-        draw.text((40, height - footer_height + 12), f"AI for Developers by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
+        draw.text((40, height - footer_height + 12), YOUR_NAME, font=footer_font, fill=(180, 180, 180))
 
         if total_slides > 0:
             slide_num_text = f"Slide {slide_number} of {total_slides}"
