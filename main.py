@@ -60,7 +60,7 @@ def produce_lesson_videos(lesson):
     print("\n--- Producing Long-Form Video ---")
 
     intro_slide = {"title": lesson['title'], "content": f"Chapter {lesson['chapter']} | Part {lesson['part']}"}
-    outro_slide = {"title": "Thanks for Watching!", "content": "Like, Share & Subscribe for more easy-to-understand AI lessons!\n#CurioByteStudio"}
+    outro_slide = {"title": "Thanks for Watching!", "content": "Like, Share & Subscribe for more amazing facts!\n#CurioByteStudio"}
     all_slides = [intro_slide] + lesson_content['long_form_slides'] + [outro_slide]
 
     slide_scripts = [
@@ -107,7 +107,7 @@ def produce_lesson_videos(lesson):
 
     short_slide_dir = OUTPUT_DIR / f"slides_short_{unique_id}"
     short_slide_content = {
-        "title": "Quick Tip!",
+        "title": "Amazing Fact!",
         "content": f"{lesson_content['short_form_highlight']}\n\n#CurioByteStudio"
     }
     short_slide_path = generate_visuals(
@@ -125,13 +125,13 @@ def produce_lesson_videos(lesson):
     short_thumb_path = generate_visuals(
         output_dir=OUTPUT_DIR,
         video_type='short',
-        thumbnail_title=f"Quick Tip: {lesson['title']}"
+        thumbnail_title=f"Amazing Fact: {lesson['title']}"
     )
 
     print("\n📤 Uploading to YouTube...")
-    hashtags = lesson_content.get("hashtags", "#AI #Developer #LearnAI")
-    long_desc = f"An easy-to-understand AI lesson from {YOUR_NAME}.\n\nToday's Lesson: {lesson['title']}\n\n{hashtags}"
-    long_tags = "AI, Artificial Intelligence, Developer, Programming, Tutorial, " + lesson['title'].replace(" ", ", ")
+    hashtags = lesson_content.get("hashtags", "#GeneralKnowledge #AmazingFacts #CurioByteStudio")
+    long_desc = f"Discover an amazing fact with {YOUR_NAME}.\n\nToday's Lesson: {lesson['title']}\n\n{hashtags}"
+    long_tags = "General Knowledge, Amazing Facts, Science, Nature, History, Education, " + lesson['title'].replace(" ", ", ")
 
     long_video_id = upload_to_youtube(
         long_video_path,
@@ -146,7 +146,7 @@ def produce_lesson_videos(lesson):
         time.sleep(30)
         highlight = (lesson_content.get('short_form_highlight') or '').strip()
         if not highlight:
-            highlight = f"AI Quick Tip: {lesson['title']}"
+            highlight = f"Amazing Fact: {lesson['title']}"
         short_title = f"{highlight[:90].rstrip()} #Shorts"
         # short_desc = f"Watch the full lesson from {YOUR_NAME} here: https://www.youtube.com/watch?v={long_video_id}\n\n#AI #Programming #Tech #Developer"
         short_desc = (f"{lesson_content['short_form_highlight']}\n\n"
@@ -156,7 +156,7 @@ def produce_lesson_videos(lesson):
             short_video_path,
             short_title.strip(),
             short_desc,
-            "AI,Shorts,TechTip",
+            "General Knowledge,Amazing Facts,Shorts",
             short_thumb_path
         )
         return long_video_id
@@ -164,7 +164,7 @@ def produce_lesson_videos(lesson):
 
 
 def main():
-    print("🚀 Starting Autonomous AI Course Generator")
+    print("🚀 Starting CurioByte Studio Amazing Facts Generator")
     print(f"📁 Current working dir: {os.getcwd()}")
     print(f"📁 OUTPUT_DIR: {OUTPUT_DIR.resolve()}")
 
