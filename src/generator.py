@@ -132,13 +132,13 @@ def generate_curriculum(previous_titles=None):
             history = f"The following lessons have already been created:\n{formatted}\n\nPlease continue from where this series left off.\n"
 
         prompt = f"""
-        You are an expert AI educator. Generate a curriculum for a beginner-friendly AI education series called 'Practical AI Explained' on the {YOUR_NAME} channel.
+        You create original, beginner-friendly General Knowledge and Amazing Facts videos for the English-language {YOUR_NAME} YouTube channel.
         {history}
-        The style must be: 'Assume the viewer is a beginner or non-technical person starting their journey into AI as a developer.
-        Use simple real-world analogies, relatable examples, and then connect to technical concepts.'
-
-        The curriculum must guide a developer from absolute beginner to advanced AI, covering foundations like Generative AI, LLMs, Vector Databases, and Agentic AI...
-        ...then continue into deep AI topics like Reinforcement Learning, Transformers internals, multi-agent systems, tool use, LangGraph, AI architecture, and more.
+        Create a fresh sequence of 20 factual, interesting episode titles for a worldwide audience.
+        Cover a varied mix of space, planet Earth, animals, the human body, geography, history, science, and everyday inventions.
+        Each title should ask a compelling question about a real phenomenon, suitable for one understandable video.
+        Do not repeat earlier episode topics or use misleading, unverified, or exaggerated claims.
+        Use simple, engaging English for viewers without specialist knowledge.
 
         Respond with ONLY a valid JSON object. The object must contain a key "lessons" which is a list of 20 lesson objects.
         Each lesson object must have these keys: "chapter", "part", "title", "status" (defaulted to "pending"), and "youtube_id" (defaulted to null).
@@ -159,14 +159,17 @@ def generate_lesson_content(lesson_title):
     try:
         client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
         prompt = f"""
-        You are creating a lesson for the 'Practical AI Explained' series on the {YOUR_NAME} channel. The topic is '{lesson_title}'.
-        The style is: Assume the viewer is a beginner developer or non-tech person who wants to learn AI from scratch.
-        Use analogies and clear, simple language. Each concept must be explained from a developer's perspective, assuming no prior AI or ML knowledge.
+        You are creating a beginner-friendly English General Knowledge and Amazing Facts episode for the {YOUR_NAME} YouTube channel.
+        The episode question is: '{lesson_title}'.
+        Explain accurate, widely accepted facts in simple, engaging English, with no invented statistics or exaggerated claims.
+        Each slide must cover one clear idea with a short title and concise, natural narration.
+        Where historical or scientific answers are uncertain or debated, explain that uncertainty rather than guessing.
+        The Short must be a catchy but factual highlight of this same episode.
 
         Generate a JSON response with three keys:
         1. "long_form_slides": A list of 7 to 8 slide objects for a longer, more detailed main video. Each object needs a "title" and "content" key.
         2. "short_form_highlight": A single, punchy, 1-2 sentence summary for a YouTube Short.
-        3. "hashtags": A string of 5-7 relevant, space-separated hashtags for this lesson (e.g., "#GenerativeAI #LLM #Developer","#NeuralNetworks #BeginnerAI #AIforDevelopers").
+        3. "hashtags": A string of 5-7 relevant, space-separated hashtags for this topic (e.g., "#GeneralKnowledge #AmazingFacts #ScienceFacts #CurioByteStudio").
 
         Return only valid JSON.
         """
