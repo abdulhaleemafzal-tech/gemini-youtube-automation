@@ -1,0 +1,25 @@
+name: Hindi Kids Agent - safe smoke tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'hindi-3d-kids-agent/**'
+      - '.github/workflows/hindi-kids*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check Python source syntax
+        run: python -m compileall -q hindi-3d-kids-agent
+      - name: Test sample plan and story prompts (no APIs, no uploads)
+        run: python -m unittest discover -s hindi-3d-kids-agent -p 'test_*.py' -v
