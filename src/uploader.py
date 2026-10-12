@@ -69,7 +69,7 @@ def upload_to_youtube(video_path, title, description, tags, thumbnail_path=None)
                 'categoryId': '28' # 28 = Science & Technology
             },
             'status': {
-                'privacyStatus': 'private', # 'private', 'public', or 'unlisted'
+                'privacyStatus': 'public', # Publish new long videos and Shorts automatically
                 'selfDeclaredMadeForKids': False
             }
         }
