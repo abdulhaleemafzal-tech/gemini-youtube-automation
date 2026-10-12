@@ -1,0 +1,107 @@
+name: Hindi 3D Kids AI Agent (manual only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "prepare = Hindi story + Flow prompts; render = video from ZIP"
+        required: true
+        type: choice
+        options:
+          - prepare
+          - render
+        default: prepare
+      topic:
+        description: "Hindi cartoon story topic (prepare only)"
+        required: false
+        type: string
+        default: "Sher aur khargosh ki dosti"
+      sample:
+        description: "Prepare: use free offline sample instead of Gemini API"
+        required: true
+        type: boolean
+        default: true
+      clips_zip_url:
+        description: "Render: HTTPS direct ZIP link containing plan.json and 5 named MP4 clips"
+        required: false
+        type: string
+      upload_private:
+        description: "Render: ALSO upload finished video to YouTube as PRIVATE"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  kids-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: hindi-3d-kids-agent/requirements.txt
+      - name: Install Python, FFmpeg and Hindi fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core
+          python -m pip install -r hindi-3d-kids-agent/requirements.txt
+      - name: Prepare new story and Google Flow prompts
+        if: inputs.mode == 'prepare'
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          TOPIC: ${{ inputs.topic }}
+          SAMPLE: ${{ inputs.sample }}
+        run: |
+          if [ "$SAMPLE" = "true" ]; then
+            python hindi-3d-kids-agent/agent.py --sample --output hindi-3d-kids-agent/work/episode_001
+          else
+            python hindi-3d-kids-agent/agent.py --topic "$TOPIC" --output hindi-3d-kids-agent/work/episode_001
+          fi
+      - name: Import Flow clips with their exact matching plan
+        if: inputs.mode == 'render'
+        env:
+          FLOW_CLIPS_ZIP_URL: ${{ inputs.clips_zip_url }}
+        run: |
+          if [ -z "$FLOW_CLIPS_ZIP_URL" ]; then
+            echo "ERROR: render requires an HTTPS clips_zip_url"; exit 1
+          fi
+          python hindi-3d-kids-agent/download_clips.py
+      - name: Make real 3D Hindi kids video, captions, thumbnail and metadata
+        if: inputs.mode == 'render'
+        run: |
+          python hindi-3d-kids-agent/producer.py \
+            --project hindi-3d-kids-agent/work/episode_001/plan.json \
+            --clips hindi-3d-kids-agent/work/episode_001 \
+            --out hindi-3d-kids-agent/output
+      - name: Restore YouTube OAuth only when private upload was requested
+        if: inputs.mode == 'render' && inputs.upload_private == true
+        env:
+          CREDENTIALS_B64: ${{ secrets.CREDENTIALS_B64 }}
+          CLIENT_SECRET_B64: ${{ secrets.CLIENT_SECRET_B64 }}
+        run: |
+          test -n "$CREDENTIALS_B64" && test -n "$CLIENT_SECRET_B64"
+          printf '%s' "$CREDENTIALS_B64" | base64 -d > credentials.json
+          printf '%s' "$CLIENT_SECRET_B64" | base64 -d > client_secrets.json
+      - name: Upload PRIVATE and Made for Kids
+        if: inputs.mode == 'render' && inputs.upload_private == true
+        run: |
+          python -c "import sys,json;sys.path.insert(0,'hindi-3d-kids-agent');from youtube_upload import upload;from pathlib import Path;p=Path('hindi-3d-kids-agent/output');plan=json.loads(Path('hindi-3d-kids-agent/work/episode_001/plan.json').read_text(encoding='utf-8'));upload(p/'hindi_kids_short.mp4',p/'thumbnail.png',plan,'private')"
+      - name: Upload outputs for download
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hindi-kids-${{ inputs.mode }}
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            hindi-3d-kids-agent/work/episode_001/plan.json
+            hindi-3d-kids-agent/work/episode_001/flow_prompts.md
+            hindi-3d-kids-agent/work/episode_001/youtube_description.txt
+            hindi-3d-kids-agent/output/hindi_kids_short.mp4
+            hindi-3d-kids-agent/output/thumbnail.png
+            hindi-3d-kids-agent/output/seo.json
