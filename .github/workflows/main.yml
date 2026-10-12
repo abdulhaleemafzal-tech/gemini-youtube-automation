@@ -1,8 +1,8 @@
 name: Autonomous AI Course Generator
 
+# Old GK automation deliberately paused: no scheduled runs.
+# It can only be started manually from GitHub Actions.
 on:
-  schedule:
-    - cron: '0 7 * * *' # 12:30 PM IST daily
   workflow_dispatch:
 
 # A run takes far longer than the gap between a manual dispatch and the daily
