@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+output/
+work/
+clips/
+*.mp3
+*.wav
+credentials.json
+client_secrets.json
+.env
